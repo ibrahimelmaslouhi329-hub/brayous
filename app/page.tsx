@@ -26,51 +26,62 @@ export default function IndexPage() {
   );
 
   return (
-    <div style={{ backgroundColor: '#f4f4f4', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+    <div style={{ backgroundColor: '#fff', minHeight: '100vh', fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}>
       
-      {/* HEADER: اللوغو والسلة */}
+      {/* HEADER: اللوغو باللون الأحمر والخط المستيلي */}
       <nav style={{ 
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '15px 5%', backgroundColor: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        padding: '20px 5%', backgroundColor: '#fff', borderBottom: '2px solid #ff0000',
         position: 'sticky', top: 0, zIndex: 100
       }}>
-        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>BRAYOUS</div>
-        <div style={{ position: 'relative', cursor: 'pointer' }}>
-          <span style={{ fontSize: '26px' }}>🛒</span>
-          <span style={{ position: 'absolute', top: '-5px', right: '-10px', backgroundColor: '#e44d26', color: '#fff', borderRadius: '50%', padding: '2px 6px', fontSize: '12px' }}>0</span>
+        <div style={{ 
+          fontSize: '32px', fontWeight: '900', color: '#ff0000', 
+          letterSpacing: '3px', textTransform: 'uppercase', fontStyle: 'italic'
+        }}>
+          BRAYOUS
+        </div>
+        <div style={{ position: 'relative', cursor: 'pointer', color: '#ff0000' }}>
+          <span style={{ fontSize: '28px' }}>🛒</span>
         </div>
       </nav>
 
-      <div style={{ padding: '20px 5%' }}>
-        {/* خانة البحث */}
-        <div style={{ maxWidth: '600px', margin: '0 auto 30px auto' }}>
+      <div style={{ padding: '30px 5%' }}>
+        {/* خانة البحث حمراء */}
+        <div style={{ maxWidth: '600px', margin: '0 auto 40px auto' }}>
           <input 
             type="text" 
-            placeholder="🔍 قلب على اللبسة اللي بغيتي..." 
+            placeholder="🔍 قلب على الموديلات الجديدة..." 
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
-              width: '100%', padding: '15px', borderRadius: '25px', 
-              border: '1px solid #ddd', outline: 'none', fontSize: '16px'
+              width: '100%', padding: '15px 25px', borderRadius: '50px', 
+              border: '2px solid #ff0000', outline: 'none', fontSize: '16px',
+              color: '#333', fontWeight: '500'
             }} 
           />
         </div>
 
-        {/* عرض السلعة بالصور والواتساب */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '25px' }}>
+        {/* عرض السلعة */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '35px' }}>
           {filteredProducts.map((product: any) => (
-            <div key={product.name} style={{ backgroundColor: '#fff', borderRadius: '15px', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-              <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '350px', objectFit: 'cover' }} />
-              <div style={{ padding: '15px', textAlign: 'center' }}>
-                <h3 style={{ margin: '10px 0' }}>{product.name}</h3>
-                <p style={{ color: '#e44d26', fontWeight: 'bold', fontSize: '1.2rem' }}>{product.price} DH</p>
+            <div key={product.name} style={{ 
+              backgroundColor: '#fff', borderRadius: '20px', overflow: 'hidden', 
+              boxShadow: '0 10px 20px rgba(255,0,0,0.05)', border: '1px solid #eee'
+            }}>
+              <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '380px', objectFit: 'cover' }} />
+              <div style={{ padding: '20px', textAlign: 'center' }}>
+                <h3 style={{ margin: '10px 0', color: '#ff0000', fontWeight: '700', fontSize: '1.3rem' }}>{product.name}</h3>
+                <p style={{ color: '#000', fontWeight: '900', fontSize: '1.5rem', marginBottom: '20px' }}>{product.price} DH</p>
+                
                 <a 
                   href={`https://wa.me/212600000000?text=بغيت_نطلب_${product.name}`} 
                   style={{ 
-                    display: 'block', backgroundColor: '#25D366', color: '#fff', 
-                    padding: '10px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', marginTop: '10px'
+                    display: 'block', backgroundColor: '#ff0000', color: '#fff', 
+                    padding: '12px', borderRadius: '30px', textDecoration: 'none', 
+                    fontWeight: 'bold', fontSize: '16px', letterSpacing: '1px',
+                    boxShadow: '0 4px 10px rgba(255,0,0,0.3)'
                   }}
                 >
-                  طلب عبر واتساب ✅
+                  طلب الآن عبر واتساب
                 </a>
               </div>
             </div>

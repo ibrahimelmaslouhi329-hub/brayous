@@ -70,18 +70,14 @@ export default function Page() {
     text: isDarkMode ? '#ffffff' : '#000',
     card: isDarkMode ? '#1e1e1e' : '#fff',
     border: isDarkMode ? '#333' : '#eee',
-    secondaryText: isDarkMode ? '#aaa' : '#666'
+    secondaryText: isDarkMode ? '#aaa' : '#666',
+    blueBar: '#0055ff' // اللون الأزرق للشريط
   };
 
   return (
     <div style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', direction: 'rtl', transition: '0.3s', fontFamily: 'system-ui' }}>
       
-      {/* WhatsApp Floating Button */}
-      <a href={`https://wa.me/${whatsappNumber}`} style={{ position: 'fixed', bottom: '20px', left: '20px', backgroundColor: '#25D366', color: '#fff', width: '55px', height: '55px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 200 }}>
-        <MessageCircle size={28} />
-      </a>
-
-      {/* Header */}
+      {/* Header الرئيسي */}
       <header style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 20px', alignItems: 'center', borderBottom: `1px solid ${theme.border}`, backgroundColor: theme.card, position: 'sticky', top: 0, zIndex: 100 }}>
         <h1 style={{ color: '#ff0000', fontWeight: '900', margin: 0, fontSize: '1.6rem' }}>BRAYOUS</h1>
         <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
@@ -91,6 +87,11 @@ export default function Page() {
           <ShoppingCart size={24} />
         </div>
       </header>
+
+      {/* الشريط الأزرق الجديد */}
+      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem', letterSpacing: '2px' }}>
+        BRAYOUS SHOP - مرحبا بكم
+      </div>
 
       {/* Search Bar */}
       <div style={{ padding: '15px 20px' }}>
@@ -148,7 +149,6 @@ export default function Page() {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', padding: '20px', maxWidth: '1200px', margin: '0 auto', gap: '30px' }}>
-            {/* Image Gallery */}
             <div style={{ flex: '1 1 450px' }}>
               <div style={{ backgroundColor: '#fff', borderRadius: '12px', overflow: 'hidden', border: `1px solid ${theme.border}`, marginBottom: '15px' }}>
                 <img src={mainImage} style={{ width: '100%', maxHeight: '450px', objectFit: 'contain' }} />
@@ -161,21 +161,9 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Product Info & Reviews Form */}
             <div style={{ flex: '1 1 400px', textAlign: 'right' }}>
               <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>{selectedItem.name}</h1>
               <p style={{ fontSize: '1.8rem', color: '#ff4400', fontWeight: 'bold' }}>{selectedItem.price} DH</p>
-
-              {selectedItem.sizes && (
-                <div style={{ marginBottom: '20px' }}>
-                  <h4 style={{ marginBottom: '8px' }}>المقاسات:</h4>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {selectedItem.sizes.split(',').map((s: string) => (
-                      <span key={s} style={{ padding: '6px 15px', border: `1px solid ${theme.border}`, borderRadius: '6px', fontSize: '0.85rem' }}>{s.trim()}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px', marginBottom: '30px' }}>
                 <h4 style={{ marginBottom: '10px' }}>وصف المنتج:</h4>
@@ -184,7 +172,7 @@ export default function Page() {
                 ))}
               </div>
 
-              {/* --- قسم التعليقات --- */}
+              {/* قسم آراء الزبناء */}
               <div style={{ backgroundColor: theme.card, padding: '15px', borderRadius: '12px', border: `1px solid ${theme.border}` }}>
                 <h3 style={{ marginBottom: '15px', fontSize: '1rem' }}>آراء الزبناء</h3>
                 
@@ -210,16 +198,3 @@ export default function Page() {
                       <p style={{ margin: '5px 0 0', color: theme.secondaryText }}>{rev.comment}</p>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              <a href={`https://wa.me/${whatsappNumber}?text=طلب منتج: ${selectedItem.name}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#25D366', color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 'bold', textDecoration: 'none', marginTop: '30px', marginBottom: '20px' }}>
-                <MessageCircle size={22} /> أطلب عبر واتساب
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}

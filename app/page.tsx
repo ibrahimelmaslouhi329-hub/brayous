@@ -71,13 +71,13 @@ export default function Page() {
     card: isDarkMode ? '#1e1e1e' : '#fff',
     border: isDarkMode ? '#333' : '#eee',
     secondaryText: isDarkMode ? '#aaa' : '#666',
-    blueBar: '#0055ff' // اللون الأزرق للشريط
+    blueBar: '#0055ff'
   };
 
   return (
     <div style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', direction: 'rtl', transition: '0.3s', fontFamily: 'system-ui' }}>
       
-      {/* Header الرئيسي */}
+      {/* Header */}
       <header style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 20px', alignItems: 'center', borderBottom: `1px solid ${theme.border}`, backgroundColor: theme.card, position: 'sticky', top: 0, zIndex: 100 }}>
         <h1 style={{ color: '#ff0000', fontWeight: '900', margin: 0, fontSize: '1.6rem' }}>BRAYOUS</h1>
         <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
@@ -88,12 +88,12 @@ export default function Page() {
         </div>
       </header>
 
-      {/* الشريط الأزرق الجديد */}
-      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem', letterSpacing: '2px' }}>
-        BRAYOUS SHOP - مرحبا بكم
+      {/* الشريط الأزرق */}
+      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem' }}>
+        BRAYOUS
       </div>
 
-      {/* Search Bar */}
+      {/* Search */}
       <div style={{ padding: '15px 20px' }}>
         <div style={{ position: 'relative' }}>
           <Search style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }} size={18} color="#999" />
@@ -101,17 +101,11 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Categories Icons */}
+      {/* Categories */}
       <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '10px 20px', scrollbarWidth: 'none' }}>
         {categories.map(cat => (
           <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: '75px' }}>
-            <div style={{ 
-              width: '55px', height: '55px', borderRadius: '18px', 
-              backgroundColor: activeCategory === cat.name ? cat.color : theme.card,
-              color: activeCategory === cat.name ? '#fff' : cat.color,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: `2px solid ${cat.color}`, transition: '0.3s'
-            }}>
+            <div style={{ width: '55px', height: '55px', borderRadius: '18px', backgroundColor: activeCategory === cat.name ? cat.color : theme.card, color: activeCategory === cat.name ? '#fff' : cat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `2px solid ${cat.color}`, transition: '0.3s' }}>
               {cat.icon}
             </div>
             <span style={{ fontSize: '0.75rem', marginTop: '6px', fontWeight: 'bold' }}>{cat.name}</span>
@@ -119,7 +113,7 @@ export default function Page() {
         ))}
       </div>
 
-      {/* Product Grid - 2 Products Per Row */}
+      {/* Product Grid (2 items per row) */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '15px' }}>
         {filteredItems.map((item, index) => (
           <div key={index} onClick={() => setSelectedItem(item)} style={{ backgroundColor: theme.card, borderRadius: '12px', overflow: 'hidden', border: `1px solid ${theme.border}`, cursor: 'pointer' }}>
@@ -130,16 +124,14 @@ export default function Page() {
               <h3 style={{ fontSize: '0.8rem', marginBottom: '5px', height: '32px', overflow: 'hidden' }}>{item.name}</h3>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#ff4400', fontWeight: 'bold' }}>{item.price} DH</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#ffaa00' }}>
-                  <Star size={10} fill="#ffaa00" />
-                </div>
+                <Star size={10} fill="#ffaa00" color="#ffaa00" />
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Product Modal with REVIEWS Section */}
+      {/* Modal */}
       {selectedItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: theme.bg, zIndex: 1000, overflowY: 'auto' }}>
           <div style={{ position: 'sticky', top: 0, backgroundColor: theme.card, padding: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `1px solid ${theme.border}`, zIndex: 1010 }}>
@@ -165,36 +157,44 @@ export default function Page() {
               <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>{selectedItem.name}</h1>
               <p style={{ fontSize: '1.8rem', color: '#ff4400', fontWeight: 'bold' }}>{selectedItem.price} DH</p>
 
-              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px', marginBottom: '30px' }}>
+              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px', marginBottom: '20px' }}>
                 <h4 style={{ marginBottom: '10px' }}>وصف المنتج:</h4>
                 {selectedItem.description?.split('\n').map((line: string, i: number) => (
                   <p key={i} style={{ fontSize: '0.9rem', color: theme.secondaryText, marginBottom: '5px' }}>• {line}</p>
                 ))}
               </div>
 
-              {/* قسم آراء الزبناء */}
-              <div style={{ backgroundColor: theme.card, padding: '15px', borderRadius: '12px', border: `1px solid ${theme.border}` }}>
+              {/* قسم التقييم والتعليقات - تحت الوصف نيشان */}
+              <div style={{ backgroundColor: theme.card, padding: '15px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '20px' }}>
                 <h3 style={{ marginBottom: '15px', fontSize: '1rem' }}>آراء الزبناء</h3>
-                
                 <input type="text" placeholder="سميتك..." value={newReview.user} onChange={(e) => setNewReview({...newReview, user: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} />
                 <textarea placeholder="رأيك في المنتج..." value={newReview.comment} onChange={(e) => setNewReview({...newReview, comment: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', minHeight: '70px' }}></textarea>
-                
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
                   <div style={{ display: 'flex', gap: '5px' }}>
                     {[1,2,3,4,5].map(s => <Star key={s} size={20} fill={s <= newReview.stars ? "#ffaa00" : "none"} color="#ffaa00" onClick={() => setNewReview({...newReview, stars: s})} style={{cursor:'pointer'}} />)}
                   </div>
-                  <button onClick={() => handleAddReview(selectedItem._id)} style={{ backgroundColor: '#000', color: '#fff', padding: '8px 15px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>إضافة تقييم</button>
+                  <button onClick={() => handleAddReview(selectedItem._id)} style={{ backgroundColor: '#000', color: '#fff', padding: '8px 15px', borderRadius: '8px', border: 'none', fontWeight: 'bold' }}>إضافة تقييم</button>
                 </div>
-
-                <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{ marginTop: '15px' }}>
                   {(reviews[selectedItem._id] || []).map((rev: any, i: number) => (
-                    <div key={i} style={{ padding: '10px', borderBottom: `1px solid ${theme.border}`, fontSize: '0.9rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div key={i} style={{ padding: '10px 0', borderBottom: `1px solid ${theme.border}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                         <strong>{rev.user}</strong>
-                        <div style={{ display: 'flex', gap: '2px' }}>
-                          {[...Array(rev.stars)].map((_, j) => <Star key={j} size={10} fill="#ffaa00" color="#ffaa00" />)}
-                        </div>
+                        <div style={{ display: 'flex' }}>{[...Array(rev.stars)].map((_, j) => <Star key={j} size={10} fill="#ffaa00" color="#ffaa00" />)}</div>
                       </div>
-                      <p style={{ margin: '5px 0 0', color: theme.secondaryText }}>{rev.comment}</p>
+                      <p style={{ fontSize: '0.85rem', color: theme.secondaryText, margin: '5px 0' }}>{rev.comment}</p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <a href={`https://wa.me/${whatsappNumber}?text=طلب: ${selectedItem.name}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#25D366', color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 'bold', textDecoration: 'none' }}>
+                <MessageCircle size={22} /> أطلب عبر واتساب
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

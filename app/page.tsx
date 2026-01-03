@@ -21,7 +21,7 @@ const categories = [
   { name: "سيرڤيت", icon: "🏃" },
 ];
 
-export default function Page() {
+export const dynamic = 'force-dynamic';
   const [items, setItems] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("الكل");
@@ -198,6 +198,16 @@ export default function Page() {
                 <button onClick={() => {const n=[...cart]; n.splice(i,1); setCart(n);}} style={{color:'red', border:'none', background:'none'}}><Trash2 size={20}/></button>
               </div>
             ))}
+{/* إضافة كود برومو */}
+<div style={{ marginTop: '15px', padding: '10px', border: `1px dashed ${theme.redBrand}`, borderRadius: '10px' }}>
+  <input 
+    type="text" 
+    placeholder="كود الخصم" 
+    onChange={(e) => setPromoCode(e.target.value)}
+    style={{ width: '70%', padding: '8px', borderRadius: '5px', border: '1px solid #ddd', color: '#000' }} 
+  />
+  <button onClick={handleApplyPromo} style={{ width: '25%', padding: '8px', marginRight: '5%', background: '#000', color: '#fff', borderRadius: '5px', border: 'none' }}>تطبيق</button>
+</div>
             {cart.length > 0 && <button onClick={() => {setIsCartOpen(false); setShowOrderForm(true);}} style={{ width: '100%', backgroundColor: theme.redBrand, color: '#fff', padding: '18px', borderRadius: '12px', marginTop: '20px', fontWeight: 'bold' }}>إتمام الطلب 🚀</button>}
           </div>
         </div>
@@ -211,7 +221,35 @@ export default function Page() {
                 <input type="text" placeholder="الاسم الكامل" onChange={(e)=>setOrderInfo({...orderInfo, name:e.target.value})} style={{padding:'12px', borderRadius:'10px', border:'1px solid #ddd', color:'#000'}} />
                 <input type="text" placeholder="المدينة" onChange={(e)=>setOrderInfo({...orderInfo, city:e.target.value})} style={{padding:'12px', borderRadius:'10px', border:'1px solid #ddd', color:'#000'}} />
                 <input type="text" placeholder="العنوان" onChange={(e)=>setOrderInfo({...orderInfo, address:e.target.value})} style={{padding:'12px', borderRadius:'10px', border:'1px solid #ddd', color:'#000'}} />
-                <button onClick={() => window.open(`https://wa.me/212601042910?text=طلب جديد: ${cart.map(i=>i.name).join(', ')}`, '_blank')} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '15px', borderRadius: '10px', border: 'none', fontWeight: 'bold', marginTop: '10px' }}>تأكيد عبر واتساب</button>
+              <button 
+  onClick={() => {
+    const total = cart.reduce((acc, item) => acc + Number(item.price), 0) * (1 - discount);
+    // الرقم خاصو يكون أرقام فقط بدون زائد أو مسافات
+    const whatsappNumber = "212601042910"; 
+    const message = encodeURIComponent(
+      `*طلب جديد من BRAYOUS_SHOP* 🚀\n\n` +
+      `*الاسم:* ${orderInfo.name}\n` +
+      `*المدينة:* ${orderInfo.city}\n` +
+      `*العنوان:* ${orderInfo.address}\n\n` +
+      `*المنتجات:* ${cart.map(i => i.name).join(', ')}\n` +
+      `*المجموع النهائي:* ${total} DH`
+    );
+    window.open(`https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`, '_blank');
+  }} 
+  style={{ 
+    width: '100%', 
+    backgroundColor: '#25D366', 
+    color: '#fff', 
+    padding: '15px', 
+    borderRadius: '12px', 
+    border: 'none', 
+    fontWeight: 'bold', 
+    marginTop: '15px',
+    cursor: 'pointer'
+  }}
+>
+  تأكيد الطلب عبر واتساب ✅
+</button>
                 <button onClick={()=>setShowOrderForm(false)} style={{background:'none', border:'none', color: '#999', marginTop: '10px'}}>إلغاء</button>
             </div>
           </div>

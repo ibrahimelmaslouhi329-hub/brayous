@@ -21,7 +21,6 @@ export default function Page() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mainImage, setMainImage] = useState("");
   
-  // نظام التعليقات
   const [reviews, setReviews] = useState<any>({});
   const [newReview, setNewReview] = useState({ user: "", comment: "", stars: 5 });
 
@@ -88,16 +87,16 @@ export default function Page() {
         </div>
       </header>
 
-      {/* الشريط الأزرق */}
-      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem' }}>
-        BRAYOUS
+      {/* الشريط الأزرق الكبير */}
+      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '25px 10px', textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', textTransform: 'uppercase', boxShadow: 'inset 0 -5px 10px rgba(0,0,0,0.1)' }}>
+        BRAYOUS_SHOP
       </div>
 
       {/* Search */}
-      <div style={{ padding: '15px 20px' }}>
+      <div style={{ padding: '20px' }}>
         <div style={{ position: 'relative' }}>
           <Search style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }} size={18} color="#999" />
-          <input type="text" placeholder="قلب على الموديل..." onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '12px 45px 12px 15px', borderRadius: '30px', border: `1px solid ${isDarkMode ? '#444' : '#ddd'}`, backgroundColor: theme.card, color: theme.text, outline: 'none' }} />
+          <input type="text" placeholder="قلب على الموديل..." onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '15px 45px 15px 15px', borderRadius: '30px', border: `1px solid ${isDarkMode ? '#444' : '#ddd'}`, backgroundColor: theme.card, color: theme.text, outline: 'none' }} />
         </div>
       </div>
 
@@ -113,7 +112,7 @@ export default function Page() {
         ))}
       </div>
 
-      {/* Product Grid (2 items per row) */}
+      {/* Products Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '15px' }}>
         {filteredItems.map((item, index) => (
           <div key={index} onClick={() => setSelectedItem(item)} style={{ backgroundColor: theme.card, borderRadius: '12px', overflow: 'hidden', border: `1px solid ${theme.border}`, cursor: 'pointer' }}>
@@ -140,56 +139,59 @@ export default function Page() {
             <div style={{ width: '28px' }}></div>
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', padding: '20px', maxWidth: '1200px', margin: '0 auto', gap: '30px' }}>
-            <div style={{ flex: '1 1 450px' }}>
-              <div style={{ backgroundColor: '#fff', borderRadius: '12px', overflow: 'hidden', border: `1px solid ${theme.border}`, marginBottom: '15px' }}>
-                <img src={mainImage} style={{ width: '100%', maxHeight: '450px', objectFit: 'contain' }} />
+          <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+            {/* 1. الصور أولاً */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '12px', overflow: 'hidden', border: `1px solid ${theme.border}`, marginBottom: '15px' }}>
+              <img src={mainImage} style={{ width: '100%', maxHeight: '450px', objectFit: 'contain' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '20px' }}>
+              <img src={selectedItem.imageUrl} onClick={() => setMainImage(selectedItem.imageUrl)} style={{ width: '65px', height: '65px', borderRadius: '8px', border: mainImage === selectedItem.imageUrl ? '2px solid #ff4400' : '1px solid #ddd', cursor: 'pointer', objectFit: 'cover' }} />
+              {selectedItem.otherImages?.map((img: string, i: number) => (
+                <img key={i} src={img} onClick={() => setMainImage(img)} style={{ width: '65px', height: '65px', borderRadius: '8px', border: mainImage === img ? '2px solid #ff4400' : '1px solid #ddd', cursor: 'pointer', objectFit: 'cover' }} />
+              ))}
+            </div>
+
+            {/* 2. آراء الزبناء مباشرة تحت الصور */}
+            <div style={{ backgroundColor: theme.card, padding: '20px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '25px' }}>
+              <h3 style={{ marginBottom: '15px', fontSize: '1.2rem', fontWeight: 'bold', color: theme.blueBar }}>آراء الزبناء والتقييمات</h3>
+              <input type="text" placeholder="اسمك الكامل..." value={newReview.user} onChange={(e) => setNewReview({...newReview, user: e.target.value})} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} />
+              <textarea placeholder="ما هو رأيك في هذا المنتج؟" value={newReview.comment} onChange={(e) => setNewReview({...newReview, comment: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', minHeight: '80px' }}></textarea>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '5px' }}>
+                  {[1,2,3,4,5].map(s => <Star key={s} size={24} fill={s <= newReview.stars ? "#ffaa00" : "none"} color="#ffaa00" onClick={() => setNewReview({...newReview, stars: s})} style={{cursor:'pointer'}} />)}
+                </div>
+                <button onClick={() => handleAddReview(selectedItem._id)} style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>إرسال التقييم</button>
               </div>
-              <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
-                <img src={selectedItem.imageUrl} onClick={() => setMainImage(selectedItem.imageUrl)} style={{ width: '65px', height: '65px', borderRadius: '8px', border: mainImage === selectedItem.imageUrl ? '2px solid #ff4400' : '1px solid #ddd', cursor: 'pointer', objectFit: 'cover' }} />
-                {selectedItem.otherImages?.map((img: string, i: number) => (
-                  <img key={i} src={img} onClick={() => setMainImage(img)} style={{ width: '65px', height: '65px', borderRadius: '8px', border: mainImage === img ? '2px solid #ff4400' : '1px solid #ddd', cursor: 'pointer', objectFit: 'cover' }} />
+
+              <div style={{ marginTop: '25px' }}>
+                {(reviews[selectedItem._id] || []).map((rev: any, i: number) => (
+                  <div key={i} style={{ padding: '15px 0', borderBottom: `1px solid ${theme.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <strong>{rev.user}</strong>
+                      <div style={{ display: 'flex' }}>{[...Array(rev.stars)].map((_, j) => <Star key={j} size={12} fill="#ffaa00" color="#ffaa00" />)}</div>
+                    </div>
+                    <p style={{ fontSize: '0.9rem', color: theme.secondaryText, marginTop: '8px' }}>{rev.comment}</p>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ flex: '1 1 400px', textAlign: 'right' }}>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>{selectedItem.name}</h1>
-              <p style={{ fontSize: '1.8rem', color: '#ff4400', fontWeight: 'bold' }}>{selectedItem.price} DH</p>
-
-              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px', marginBottom: '20px' }}>
+            {/* 3. الوصف والمعلومات */}
+            <div style={{ textAlign: 'right', marginBottom: '100px' }}>
+              <h1 style={{ fontSize: '1.6rem', fontWeight: 'bold', marginBottom: '10px' }}>{selectedItem.name}</h1>
+              <p style={{ fontSize: '2rem', color: '#ff4400', fontWeight: 'bold', marginBottom: '15px' }}>{selectedItem.price} DH</p>
+              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px' }}>
                 <h4 style={{ marginBottom: '10px' }}>وصف المنتج:</h4>
                 {selectedItem.description?.split('\n').map((line: string, i: number) => (
-                  <p key={i} style={{ fontSize: '0.9rem', color: theme.secondaryText, marginBottom: '5px' }}>• {line}</p>
+                  <p key={i} style={{ fontSize: '1rem', color: theme.secondaryText, marginBottom: '8px' }}>• {line}</p>
                 ))}
               </div>
+            </div>
 
-              {/* قسم التقييم والتعليقات - تحت الوصف نيشان */}
-              <div style={{ backgroundColor: theme.card, padding: '15px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '20px' }}>
-                <h3 style={{ marginBottom: '15px', fontSize: '1rem' }}>آراء الزبناء</h3>
-                <input type="text" placeholder="سميتك..." value={newReview.user} onChange={(e) => setNewReview({...newReview, user: e.target.value})} style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none' }} />
-                <textarea placeholder="رأيك في المنتج..." value={newReview.comment} onChange={(e) => setNewReview({...newReview, comment: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', minHeight: '70px' }}></textarea>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                  <div style={{ display: 'flex', gap: '5px' }}>
-                    {[1,2,3,4,5].map(s => <Star key={s} size={20} fill={s <= newReview.stars ? "#ffaa00" : "none"} color="#ffaa00" onClick={() => setNewReview({...newReview, stars: s})} style={{cursor:'pointer'}} />)}
-                  </div>
-                  <button onClick={() => handleAddReview(selectedItem._id)} style={{ backgroundColor: '#000', color: '#fff', padding: '8px 15px', borderRadius: '8px', border: 'none', fontWeight: 'bold' }}>إضافة تقييم</button>
-                </div>
-                <div style={{ marginTop: '15px' }}>
-                  {(reviews[selectedItem._id] || []).map((rev: any, i: number) => (
-                    <div key={i} style={{ padding: '10px 0', borderBottom: `1px solid ${theme.border}` }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                        <strong>{rev.user}</strong>
-                        <div style={{ display: 'flex' }}>{[...Array(rev.stars)].map((_, j) => <Star key={j} size={10} fill="#ffaa00" color="#ffaa00" />)}</div>
-                      </div>
-                      <p style={{ fontSize: '0.85rem', color: theme.secondaryText, margin: '5px 0' }}>{rev.comment}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <a href={`https://wa.me/${whatsappNumber}?text=طلب: ${selectedItem.name}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#25D366', color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 'bold', textDecoration: 'none' }}>
-                <MessageCircle size={22} /> أطلب عبر واتساب
+            {/* زر الواتساب الثابت */}
+            <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', padding: '15px', backgroundColor: theme.card, borderTop: `1px solid ${theme.border}`, zIndex: 1100 }}>
+              <a href={`https://wa.me/${whatsappNumber}?text=طلب منتج: ${selectedItem.name}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#25D366', color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 'bold', textDecoration: 'none', fontSize: '1.2rem' }}>
+                <MessageCircle size={24} /> أطلب الآن عبر واتساب
               </a>
             </div>
           </div>

@@ -35,7 +35,6 @@ export default function Page() {
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderInfo, setOrderInfo] = useState({ name: "", city: "", address: "" });
   
-  // نظام التقييمات
   const [reviews, setReviews] = useState<any>({});
   const [newReview, setNewReview] = useState({ user: "", comment: "", stars: 5 });
 
@@ -53,20 +52,12 @@ export default function Page() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (selectedItem) setMainImage(selectedItem.imageUrl);
-  }, [selectedItem]);
+  useEffect(() => { if (selectedItem) setMainImage(selectedItem.imageUrl); }, [selectedItem]);
 
   const handleAddReview = (productId: string) => {
-    if (!newReview.user || !newReview.comment) {
-      alert("عافاك اكتب سميتك والتعليق ديالك");
-      return;
-    }
+    if (!newReview.user || !newReview.comment) return;
     const currentReviews = reviews[productId] || [];
-    setReviews({ 
-      ...reviews, 
-      [productId]: [{ ...newReview, date: new Date().toLocaleDateString() }, ...currentReviews] 
-    });
+    setReviews({ ...reviews, [productId]: [{ ...newReview }, ...currentReviews] });
     setNewReview({ user: "", comment: "", stars: 5 });
   };
 
@@ -76,169 +67,125 @@ export default function Page() {
     setIsCartOpen(true);
   };
 
-  const handleFinalWhatsApp = () => {
-    if (!orderInfo.name || !orderInfo.city || !orderInfo.address) { alert("عمر معلومات الشحن"); return; }
-    const cartDetails = cart.map(i => `- ${i.name}`).join('%0A');
-    const total = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-    const message = `*طلب جديد BRAYOUS*%0A%0A*السلعة:*%0A${cartDetails}%0A%0A*المجموع:* ${total} DH%0A*الاسم:* ${orderInfo.name}%0A*المدينة:* ${orderInfo.city}%0A*العنوان:* ${orderInfo.address}`;
-    window.open(`https://wa.me/212601042910?text=${message}`, '_blank');
-  };
-
   const theme = {
-    bg: isDarkMode ? '#0f0f0f' : '#fcfcfc',
+    bg: isDarkMode ? '#0a0a0a' : '#ffffff',
     text: isDarkMode ? '#ffffff' : '#1a1a1a',
-    card: isDarkMode ? '#1a1a1a' : '#ffffff',
-    shadow: isDarkMode ? '0 4px 20px rgba(0,0,0,0.4)' : '0 4px 15px rgba(0,0,0,0.06)',
+    card: isDarkMode ? '#1a1a1a' : '#f9f9f9',
     redBrand: '#ff0000',
-    secondaryText: isDarkMode ? '#aaa' : '#666'
+    secondaryText: isDarkMode ? '#888' : '#777'
   };
-
-  const filteredItems = items.filter(i => 
-    (activeCategory === "الكل" || i.category === activeCategory) &&
-    (i.name?.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
 
   return (
     <div style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', direction: 'rtl', transition: '0.3s', fontFamily: 'system-ui, sans-serif' }}>
       
       {/* Header */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 20px', alignItems: 'center', backgroundColor: theme.card, boxShadow: theme.shadow, position: 'sticky', top: 0, zIndex: 100 }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 20px', alignItems: 'center', backgroundColor: theme.bg, position: 'sticky', top: 0, zIndex: 100 }}>
         <h1 style={{ color: theme.redBrand, fontWeight: '900', margin: 0, fontSize: '1.6rem' }}>BRAYOUS</h1>
         <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
-           <button onClick={() => setIsDarkMode(!isDarkMode)} style={{ background: 'none', border: 'none', color: theme.text, cursor: 'pointer' }}>{isDarkMode ? <Sun size={22} color="#ffcc00" /> : <Moon size={22} />}</button>
+           <button onClick={() => setIsDarkMode(!isDarkMode)} style={{ background: 'none', border: 'none', color: theme.text, cursor: 'pointer' }}>{isDarkMode ? <Sun size={22} /> : <Moon size={22} />}</button>
            <div onClick={() => setIsCartOpen(true)} style={{ position: 'relative', cursor: 'pointer' }}>
               <ShoppingCart size={24} />
-              {cart.length > 0 && <span style={{ position: 'absolute', top: '-8px', right: '-8px', backgroundColor: theme.redBrand, color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '50%', fontWeight: 'bold' }}>{cart.length}</span>}
+              {cart.length > 0 && <span style={{ position: 'absolute', top: '-8px', right: '-8px', backgroundColor: theme.redBrand, color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '50%' }}>{cart.length}</span>}
            </div>
         </div>
       </header>
 
-      <div style={{ backgroundColor: theme.redBrand, color: '#fff', padding: '20px 10px', textAlign: 'center', fontWeight: '900', fontSize: '1.8rem' }}>BRAYOUS_SHOP</div>
-
       {/* البحث والفئات */}
-      <div style={{ padding: '20px 20px 10px' }}>
+      <div style={{ padding: '10px 20px' }}>
         <div style={{ position: 'relative', maxWidth: '600px', margin: '0 auto' }}>
-          <input type="text" placeholder="قلب على الموديل..." onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '15px 45px 15px 15px', borderRadius: '15px', border: 'none', backgroundColor: theme.card, color: theme.text, boxShadow: theme.shadow, outline: 'none' }} />
-          <Search size={20} style={{ position: 'absolute', right: '15px', top: '16px', color: '#999' }} />
+          <input type="text" placeholder="بحث..." onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '12px 40px 12px 15px', borderRadius: '30px', border: '1px solid #eee', backgroundColor: theme.card, color: theme.text, outline: 'none' }} />
+          <Search size={18} style={{ position: 'absolute', right: '15px', top: '13px', color: '#999' }} />
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '10px 20px 20px', scrollbarWidth: 'none' }}>
+      <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '15px 20px', scrollbarWidth: 'none' }}>
         {categories.map((cat) => (
-          <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '70px' }}>
-            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: activeCategory === cat.name ? theme.redBrand : theme.card, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', boxShadow: theme.shadow, border: activeCategory === cat.name ? `2px solid ${theme.redBrand}` : '2px solid transparent' }}>{cat.icon}</div>
-            <span style={{ fontSize: '0.8rem', fontWeight: activeCategory === cat.name ? 'bold' : 'normal' }}>{cat.name}</span>
+          <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ textAlign: 'center', cursor: 'pointer', minWidth: '60px' }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: activeCategory === cat.name ? theme.redBrand : theme.card, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', transition: '0.3s' }}>{cat.icon}</div>
+            <span style={{ fontSize: '0.75rem', marginTop: '5px', display: 'block' }}>{cat.name}</span>
           </div>
         ))}
       </div>
 
-      {/* المنتجات */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', padding: '15px' }}>
-        {filteredItems.map((item, index) => (
-          <div key={index} onClick={() => setSelectedItem(item)} style={{ backgroundColor: theme.card, borderRadius: '15px', overflow: 'hidden', boxShadow: theme.shadow }}>
-            <div style={{ height: '170px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img src={item.imageUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+      {/* عرض المنتجات */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', padding: '10px' }}>
+        {items.filter(i => (activeCategory === "الكل" || i.category === activeCategory) && i.name?.toLowerCase().includes(searchTerm.toLowerCase())).map((item, index) => (
+          <div key={index} onClick={() => setSelectedItem(item)} style={{ backgroundColor: theme.card, borderRadius: '12px', overflow: 'hidden' }}>
+            <div style={{ height: '160px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={item.imageUrl} alt="" style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} />
             </div>
-            <div style={{ padding: '12px' }}>
-              <h3 style={{ fontSize: '0.85rem', height: '35px', overflow: 'hidden', margin: '0 0 8px 0' }}>{item.name}</h3>
+            <div style={{ padding: '10px' }}>
+              <h3 style={{ fontSize: '0.8rem', height: '32px', overflow: 'hidden', margin: '0 0 5px 0' }}>{item.name}</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: theme.redBrand, fontWeight: '900' }}>{item.price} DH</span>
-                {item.oldPrice && <span style={{ color: '#999', textDecoration: 'line-through', fontSize: '0.75rem' }}>{item.oldPrice} DH</span>}
+                <span style={{ color: theme.redBrand, fontWeight: 'bold' }}>{item.price} DH</span>
+                {item.oldPrice && <span style={{ color: '#999', textDecoration: 'line-through', fontSize: '0.7rem' }}>{item.oldPrice} DH</span>}
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* مودال التفاصيل والتقييمات */}
+      {/* تفاصيل المنتج المريحة */}
       {selectedItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: theme.bg, zIndex: 1000, overflowY: 'auto' }}>
-          <div style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', position: 'sticky', top: 0, backgroundColor: theme.card, boxShadow: theme.shadow, zIndex: 10 }}>
-            <button onClick={() => setSelectedItem(null)} style={{background:'none', border:'none', color: theme.text}}><X size={30} /></button>
-            <strong>تفاصيل المنتج</strong>
-            <div style={{width: 30}}></div>
+          <div style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', position: 'sticky', top: 0, backgroundColor: theme.bg, zIndex: 11 }}>
+            <button onClick={() => setSelectedItem(null)} style={{background:'none', border:'none', color: theme.text}}><X size={28} /></button>
+            <strong>{selectedItem.name}</strong>
+            <div style={{width: 28}}></div>
           </div>
 
-          <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '15px' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '25px' }}>
-              <div style={{ flex: '1 1 350px' }}>
-                <img src={mainImage} alt="" style={{ width: '100%', borderRadius: '15px', backgroundColor: '#fff', boxShadow: theme.shadow }} />
-                <div style={{ display: 'flex', gap: '10px', marginTop: '10px', overflowX: 'auto' }}>
-                  {[selectedItem.imageUrl, ...(selectedItem.otherImages || [])].map((img, idx) => (
-                    <img key={idx} src={img} alt="" onClick={() => setMainImage(img)} style={{ width: '65px', height: '65px', borderRadius: '10px', border: mainImage === img ? `2px solid ${theme.redBrand}` : '1px solid #ddd', cursor: 'pointer', backgroundColor: '#fff', objectFit: 'contain' }} />
-                  ))}
-                </div>
-              </div>
-              <div style={{ flex: '1 1 300px' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '800' }}>{selectedItem.name}</h2>
-                <p style={{ color: theme.redBrand, fontSize: '2rem', fontWeight: '900', margin: '10px 0' }}>{selectedItem.price} DH</p>
-                <div style={{ padding: '15px', backgroundColor: isDarkMode ? '#222' : '#f8f8f8', borderRadius: '12px', marginBottom: '20px' }}>
-                  <p style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{selectedItem.description}</p>
-                </div>
-                <button onClick={() => addToCart(selectedItem)} style={{ width: '100%', backgroundColor: theme.redBrand, color: '#fff', padding: '18px', borderRadius: '12px', border: 'none', fontWeight: 'bold', fontSize: '1.2rem' }}>إضافة إلى السلة</button>
-              </div>
-            </div>
-
-            {/* قسم التقييمات الجديد */}
-            <div style={{ marginTop: '40px', padding: '20px', backgroundColor: theme.card, borderRadius: '20px', boxShadow: theme.shadow }}>
-              <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>آراء الزبناء <Star fill="#ffcc00" color="#ffcc00" size={20} /></h3>
-              
-              {/* فورم إضافة تقييم */}
-              <div style={{ marginBottom: '30px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <input type="text" placeholder="سميتك الكاملة" value={newReview.user} onChange={(e)=>setNewReview({...newReview, user:e.target.value})} style={{padding:'12px', borderRadius:'10px', border:'1px solid #ddd', outline:'none', backgroundColor: theme.bg, color: theme.text}} />
-                <textarea placeholder="كيف جاتك السلعة؟" value={newReview.comment} onChange={(e)=>setNewReview({...newReview, comment:e.target.value})} style={{padding:'12px', borderRadius:'10px', border:'1px solid #ddd', minHeight:'80px', outline:'none', backgroundColor: theme.bg, color: theme.text}} />
-                <div style={{display:'flex', gap:'5px'}}>
-                   {[1,2,3,4,5].map(n => (
-                     <Star key={n} size={25} cursor="pointer" onClick={()=>setNewReview({...newReview, stars:n})} fill={n <= newReview.stars ? "#ffcc00" : "none"} color="#ffcc00" />
-                   ))}
-                </div>
-                <button onClick={() => handleAddReview(selectedItem._id)} style={{ backgroundColor: theme.redBrand, color: '#fff', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: 'bold' }}>نشر التقييم</button>
-              </div>
-
-              {/* قائمة التقييمات بخطوط وهمية */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                {(reviews[selectedItem._id] || []).length === 0 ? (
-                  <p style={{textAlign:'center', color: theme.secondaryText}}>مازال حتى واحد ما قيم هاد المنتج، كون أول واحد!</p>
-                ) : (
-                  reviews[selectedItem._id].map((rev: any, i: number) => (
-                    <div key={i} style={{ padding: '15px', borderRadius: '15px', backgroundColor: theme.card, boxShadow: '0 2px 10px rgba(0,0,0,0.03)', border: isDarkMode ? '1px solid #333' : '1px solid #f0f0f0' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <strong style={{fontSize:'0.95rem'}}>{rev.user}</strong>
-                        <div style={{display:'flex', gap:'2px'}}>
-                          {[...Array(rev.stars)].map((_, s) => <Star key={s} size={12} fill="#ffcc00" color="#ffcc00" />)}
-                        </div>
-                      </div>
-                      <p style={{ fontSize: '0.85rem', color: theme.secondaryText, margin: 0 }}>{rev.comment}</p>
-                      <span style={{ fontSize: '0.7rem', color: '#999', marginTop: '10px', display: 'block' }}>{rev.date}</span>
+          <div style={{ maxWidth: '800px', margin: '0 auto', padding: '15px' }}>
+            <img src={mainImage} alt="" style={{ width: '100%', borderRadius: '15px', backgroundColor: '#fff' }} />
+            
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <div style={{ flex: 1 }}>
+                    <h2 style={{ fontSize: '1.4rem', margin: 0 }}>{selectedItem.name}</h2>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '10px' }}>
+                      <span style={{ color: theme.redBrand, fontSize: '1.8rem', fontWeight: '900' }}>{selectedItem.price} DH</span>
+                      {selectedItem.oldPrice && <span style={{ color: '#999', textDecoration: 'line-through', fontSize: '1.1rem' }}>{selectedItem.oldPrice} DH</span>}
                     </div>
-                  ))
-                )}
+                </div>
+            </div>
+
+            {/* الوصف - كل سطر بوحدو */}
+            <div style={{ marginTop: '25px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+              <h4 style={{ marginBottom: '10px', color: theme.secondaryText }}>وصف المنتج</h4>
+              <p style={{ fontSize: '0.95rem', lineHeight: '1.8', whiteSpace: 'pre-line', margin: 0 }}>
+                {selectedItem.description}
+              </p>
+            </div>
+
+            {/* زر الشراء */}
+            <button onClick={() => addToCart(selectedItem)} style={{ width: '100%', backgroundColor: theme.redBrand, color: '#fff', padding: '18px', borderRadius: '12px', border: 'none', fontWeight: 'bold', fontSize: '1.1rem', margin: '30px 0' }}>إضافة إلى السلة</button>
+
+            {/* التقييمات - بسيطة وبدون خطوط */}
+            <div style={{ marginTop: '10px' }}>
+              <h4 style={{ marginBottom: '15px' }}>آراء الزبناء ⭐</h4>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                {(reviews[selectedItem._id] || []).map((rev: any, i: number) => (
+                  <div key={i} style={{ borderBottom: '1px solid #f5f5f5', paddingBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>{rev.user}</span>
+                      <div style={{ display: 'flex' }}>{[...Array(rev.stars)].map((_, s) => <Star key={s} size={10} fill="#ffcc00" color="#ffcc00" />)}</div>
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: theme.secondaryText, margin: '5px 0 0' }}>{rev.comment}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* فورم صغير لإضافة تقييم */}
+              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input type="text" placeholder="سميتك" value={newReview.user} onChange={(e)=>setNewReview({...newReview, user:e.target.value})} style={{padding:'10px', borderRadius:'8px', border:'1px solid #eee', fontSize:'0.8rem', backgroundColor: theme.card, color: theme.text}} />
+                <textarea placeholder="تعليقك" value={newReview.comment} onChange={(e)=>setNewReview({...newReview, comment:e.target.value})} style={{padding:'10px', borderRadius:'8px', border:'1px solid #eee', fontSize:'0.8rem', minHeight:'60px', backgroundColor: theme.card, color: theme.text}} />
+                <button onClick={() => handleAddReview(selectedItem._id)} style={{ backgroundColor: '#000', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontSize: '0.8rem' }}>إرسال التقييم</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* فورم الشحن (🚚) */}
-      {showOrderForm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-          <div style={{ backgroundColor: theme.card, padding: '30px', borderRadius: '25px', width: '100%', maxWidth: '400px' }}>
-            <div style={{textAlign:'center', marginBottom:'20px'}}>
-              <Truck size={40} color={theme.redBrand} style={{margin:'0 auto 10px'}} />
-              <h2 style={{margin:0, color: theme.redBrand}}>معلومات الشحن 🚚</h2>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <input type="text" placeholder="الاسم الكامل" onChange={(e)=>setOrderInfo({...orderInfo, name:e.target.value})} style={{width:'100%', padding:'15px', borderRadius:'12px', border:'1px solid #ddd', color:'#000'}} />
-                <input type="text" placeholder="المدينة" onChange={(e)=>setOrderInfo({...orderInfo, city:e.target.value})} style={{width:'100%', padding:'15px', borderRadius:'12px', border:'1px solid #ddd', color:'#000'}} />
-                <input type="text" placeholder="العنوان الكامل (رقم المنزل...)" onChange={(e)=>setOrderInfo({...orderInfo, address:e.target.value})} style={{width:'100%', padding:'15px', borderRadius:'12px', border:'1px solid #ddd', color:'#000'}} />
-            </div>
-            <button onClick={handleFinalWhatsApp} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '18px', borderRadius: '15px', border: 'none', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '20px' }}>إرسال الطلب عبر واتساب</button>
-            <button onClick={()=>setShowOrderForm(false)} style={{ width: '100%', background: 'none', border: 'none', marginTop: '10px', color: theme.secondaryText }}>إلغاء</button>
-          </div>
-        </div>
-      )}
-
-      {/* السلة */}
+      {/* السلة وفورم الشحن (🚚) بقاو كيفما هوما */}
       {isCartOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: theme.bg, zIndex: 1500 }}>
           <div style={{ padding: '20px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between' }}>
@@ -249,14 +196,25 @@ export default function Page() {
           <div style={{ padding: '20px' }}>
             {cart.map((item, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 0', borderBottom: '1px solid #eee' }}>
-                <div>
-                  <h4 style={{margin:0}}>{item.name}</h4>
-                  <p style={{margin:0, color: theme.redBrand, fontWeight:'bold'}}>{item.price} DH</p>
-                </div>
+                <div><h4>{item.name}</h4><p>{item.price} DH</p></div>
                 <button onClick={() => {const n=[...cart]; n.splice(i,1); setCart(n);}} style={{color:'red', border:'none', background:'none'}}><Trash2 size={22}/></button>
               </div>
             ))}
-            {cart.length > 0 && <button onClick={() => {setIsCartOpen(false); setShowOrderForm(true);}} style={{ width: '100%', backgroundColor: theme.redBrand, color: '#fff', padding: '18px', borderRadius: '12px', marginTop: '20px', fontWeight: 'bold' }}>تأكيد الطلب 🚀</button>}
+            {cart.length > 0 && <button onClick={() => {setIsCartOpen(false); setShowOrderForm(true);}} style={{ width: '100%', backgroundColor: theme.redBrand, color: '#fff', padding: '18px', borderRadius: '12px', marginTop: '20px' }}>شراء الآن 🚀</button>}
+          </div>
+        </div>
+      )}
+
+      {showOrderForm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div style={{ backgroundColor: theme.card, padding: '25px', borderRadius: '20px', width: '100%', maxWidth: '400px' }}>
+            <h2 style={{textAlign:'center', color: theme.redBrand}}>معلومات الشحن 🚚</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+                <input type="text" placeholder="الاسم الكامل" onChange={(e)=>setOrderInfo({...orderInfo, name:e.target.value})} style={{width:'100%', padding:'15px', borderRadius:'10px', border:'1px solid #ddd', color:'#000'}} />
+                <input type="text" placeholder="المدينة" onChange={(e)=>setOrderInfo({...orderInfo, city:e.target.value})} style={{width:'100%', padding:'15px', borderRadius:'10px', border:'1px solid #ddd', color:'#000'}} />
+                <input type="text" placeholder="العنوان" onChange={(e)=>setOrderInfo({...orderInfo, address:e.target.value})} style={{width:'100%', padding:'15px', borderRadius:'10px', border:'1px solid #ddd', color:'#000'}} />
+                <button onClick={() => window.open(`https://wa.me/212601042910?text=طلب جديد: ${cart.map(i=>i.name).join(', ')}`, '_blank')} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '18px', borderRadius: '12px', border: 'none', fontWeight: 'bold', marginTop: '10px' }}>تأكيد عبر واتساب</button>
+            </div>
           </div>
         </div>
       )}

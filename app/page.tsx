@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X } from 'lucide-react';
+import { ShoppingCart, X, Shirt, Smartphone, hardDrive, Footprints, GraduationCap, Search } from 'lucide-react';
 import { createClient } from 'next-sanity';
 
 const client = createClient({
@@ -16,8 +16,16 @@ export default function Page() {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState("الكل");
 
-  const categories = ["الكل", "ملابس رجال", "سراول", "كاسكيطات", "سبرديلات"];
   const whatsappNumber = "212601042910"; 
+
+  // الأقسام مع الرموز ديالها والألوان
+  const categories = [
+    { name: "الكل", icon: <Search size={20} />, color: "#333" },
+    { name: "ملابس رجال", icon: <Shirt size={20} />, color: "#ff0000" }, // أحمر
+    { name: "سراول", icon: <Smartphone size={20} style={{transform: 'rotate(180deg)'}}/>, color: "#007bff" }, // أزرق
+    { name: "كاسكيطات", icon: <GraduationCap size={20} />, color: "#28a745" }, // أخضر
+    { name: "سبرديلات", icon: <Footprints size={20} />, color: "#ffc107" } // أصفر/برتقالي
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,44 +47,41 @@ export default function Page() {
 
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh', direction: 'rtl', fontFamily: 'sans-serif' }}>
-      {/* Header */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', alignItems: 'center', borderBottom: '1px solid #eee', position: 'sticky', top: 0, backgroundColor: '#fff', zIndex: 50 }}>
-        <h1 style={{ color: '#ff0000', fontWeight: 'bold', margin: 0 }}>BRAYOUS</h1>
-        <ShoppingCart size={24} />
+      
+      {/* Header - أبيض وأحمر */}
+      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '15px', alignItems: 'center', borderBottom: '3px solid #ff0000', backgroundColor: '#fff' }}>
+        <h1 style={{ color: '#ff0000', fontWeight: 'bold', margin: 0, fontSize: '1.5rem' }}>BRAYOUS</h1>
+        <div style={{ display: 'flex', gap: '15px' }}>
+            <ShoppingCart size={24} color="#007bff" /> {/* أيقونة زرقاء */}
+        </div>
       </header>
 
-      {/* Categories Bar */}
-      <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', padding: '10px 15px', backgroundColor: '#f9f9f9' }}>
+      {/* Categories Bar - رموز ملونة */}
+      <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '15px', backgroundColor: '#f8f9fa' }}>
         {categories.map(cat => (
-          <button 
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            style={{ 
-              padding: '8px 15px', borderRadius: '20px', border: activeCategory === cat ? 'none' : '1px solid #ddd',
-              backgroundColor: activeCategory === cat ? '#ff0000' : '#fff',
-              color: activeCategory === cat ? '#fff' : '#333',
-              whiteSpace: 'nowrap', cursor: 'pointer'
+          <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: '60px' }}>
+            <div style={{ 
+              width: '50px', height: '50px', borderRadius: '15px', 
+              backgroundColor: activeCategory === cat.name ? cat.color : '#fff',
+              color: activeCategory === cat.name ? '#fff' : cat.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: `2px solid ${cat.color}`, boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
             }}>
-            {cat}
-          </button>
+              {cat.icon}
+            </div>
+            <span style={{ fontSize: '0.7rem', marginTop: '5px', fontWeight: 'bold', color: '#333' }}>{cat.name}</span>
+          </div>
         ))}
       </div>
 
-      {/* Search */}
-      <div style={{ padding: '15px' }}>
-        <input type="text" placeholder="ابحث عن منتج..." onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: '100%', padding: '12px', borderRadius: '25px', border: '1px solid #ff0000', outline: 'none' }} />
-      </div>
-
-      {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', padding: '10px' }}>
+      {/* Grid المنتجات */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '15px' }}>
         {filteredItems.map((item, index) => (
-          <div key={index} onClick={() => setSelectedItem(item)} style={{ border: '1px solid #eee', borderRadius: '15px', overflow: 'hidden', backgroundColor: '#fff' }}>
-            {/* objectFit: 'contain' باش الصورة تبان كاملة */}
-            <img src={item.imageUrl} style={{ width: '100%', height: '180px', objectFit: 'contain', backgroundColor: '#f4f4f4' }} />
-            <div style={{ padding: '10px', textAlign: 'center' }}>
-              <h3 style={{ fontSize: '0.8rem', margin: '5px 0' }}>{item.name}</h3>
-              <p style={{ color: '#ff0000', fontWeight: 'bold' }}>{item.price} DH</p>
+          <div key={index} onClick={() => setSelectedItem(item)} style={{ borderRadius: '15px', overflow: 'hidden', backgroundColor: '#fff', border: '1px solid #eee', boxShadow: '0 3px 6px rgba(0,0,0,0.05)' }}>
+            <img src={item.imageUrl} style={{ width: '100%', height: '170px', objectFit: 'contain', backgroundColor: '#fff' }} />
+            <div style={{ padding: '10px', textAlign: 'center', borderTop: '1px solid #f1f1f1' }}>
+              <h3 style={{ fontSize: '0.8rem', margin: '5px 0', color: '#333' }}>{item.name}</h3>
+              <p style={{ color: '#28a745', fontWeight: 'bold', margin: 0 }}>{item.price} DH</p> {/* ثمن أخضر */}
             </div>
           </div>
         ))}
@@ -84,20 +89,17 @@ export default function Page() {
 
       {/* Modal الوصف */}
       {selectedItem && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-          <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '20px', width: '100%', maxWidth: '450px', position: 'relative' }}>
-            {/* زر الخروج X */}
-            <button onClick={() => setSelectedItem(null)} style={{ position: 'absolute', top: '-15px', left: '-15px', backgroundColor: '#ff0000', color: '#fff', border: 'none', borderRadius: '50%', width: '35px', height: '35px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <X size={20} />
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '25px', width: '100%', maxWidth: '400px', position: 'relative' }}>
+            <button onClick={() => setSelectedItem(null)} style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#ff0000', color: '#fff', border: 'none', borderRadius: '50%', width: '30px', height: '30px' }}>
+              <X size={18} />
             </button>
-            
-            <img src={selectedItem.imageUrl} style={{ width: '100%', borderRadius: '10px', maxHeight: '300px', objectFit: 'contain' }} />
+            <img src={selectedItem.imageUrl} style={{ width: '100%', borderRadius: '15px', maxHeight: '300px', objectFit: 'contain' }} />
             <h2 style={{ fontSize: '1.2rem', margin: '15px 0' }}>{selectedItem.name}</h2>
             <p style={{ color: '#666', fontSize: '0.9rem' }}>{selectedItem.description}</p>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
-              <span style={{ fontSize: '1.4rem', color: '#ff0000', fontWeight: 'bold' }}>{selectedItem.price} DH</span>
-              <a href={`https://wa.me/${whatsappNumber}?text=طلب: ${selectedItem.name}`} style={{ background: '#25D366', color: '#fff', padding: '10px 20px', borderRadius: '10px', textDecoration: 'none', fontWeight: 'bold' }}>طلب واتساب</a>
-            </div>
+            <a href={`https://wa.me/${whatsappNumber}?text=طلب: ${selectedItem.name}`} style={{ display: 'block', background: '#25D366', color: '#fff', textAlign: 'center', padding: '12px', borderRadius: '12px', textDecoration: 'none', fontWeight: 'bold', marginTop: '15px' }}>
+              اطلب الآن عبر واتساب
+            </a>
           </div>
         </div>
       )}

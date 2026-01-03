@@ -65,7 +65,7 @@ export default function Page() {
   return (
     <div style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', direction: 'rtl', transition: '0.3s', fontFamily: 'system-ui' }}>
       
-      {/* WhatsApp Button */}
+      {/* WhatsApp Floating */}
       <a href={`https://wa.me/${whatsappNumber}`} style={{ position: 'fixed', bottom: '20px', left: '20px', backgroundColor: '#25D366', color: '#fff', width: '55px', height: '55px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 200 }}>
         <MessageCircle size={28} />
       </a>
@@ -81,15 +81,15 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Search Bar */}
+      {/* Search */}
       <div style={{ padding: '15px 20px' }}>
         <div style={{ position: 'relative' }}>
           <Search style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }} size={18} color="#999" />
-          <input type="text" placeholder="قلب على الموديل اللي بغيتي..." onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '12px 45px 12px 15px', borderRadius: '30px', border: `1px solid ${isDarkMode ? '#444' : '#ddd'}`, backgroundColor: theme.card, color: theme.text, outline: 'none' }} />
+          <input type="text" placeholder="قلب على الموديل..." onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '12px 45px 12px 15px', borderRadius: '30px', border: `1px solid ${isDarkMode ? '#444' : '#ddd'}`, backgroundColor: theme.card, color: theme.text, outline: 'none' }} />
         </div>
       </div>
 
-      {/* Categories Icons */}
+      {/* Categories */}
       <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '10px 20px', scrollbarWidth: 'none' }}>
         {categories.map(cat => (
           <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: '75px' }}>
@@ -107,11 +107,4 @@ export default function Page() {
         ))}
       </div>
 
-      {/* Product Grid - هاد الجزء هو اللي عدلت باش يبانو 2 منتجات فقط */}
-      <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', // هادي كتخلي ديما 2 في السطر
-          gap: '15px', 
-          padding: '15px 20px' 
-      }}>
-        {filteredItems.
+      {/* Product Grid

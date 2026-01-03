@@ -6,11 +6,12 @@ export const product = {
       { name: 'name', title: 'اسم المنتج', type: 'string' },
       { name: 'price', title: 'الثمن (DH)', type: 'number' },
       { name: 'category', title: 'الصنف', type: 'string', options: { list: [
-        { title: 'ملابس رجال', value: 'ملابس رجال' },
+        { title: 'جاكيط', value: 'جاكيط' },
         { title: 'سراول', value: 'سراول' },
-        { title: 'كاسكيطات', value: 'كاسكيطات' },
-        { title: 'سبرديلات', value: 'سبرديلات' },
-      ]}},
+        { title: 'طرابش', value: 'طرابش' },
+        { title: 'سيرڤيت', value: 'سيرڤيت' },
+        { title: 'قبية', value: 'قبية' },
+      ]}},  
       { name: 'image', title: 'الصورة الرئيسية', type: 'image', options: { hotspot: true } },
       // إضافة صور إضافية
       { name: 'images', title: 'صور إضافية للمنتج', type: 'array', of: [{ type: 'image' }] },

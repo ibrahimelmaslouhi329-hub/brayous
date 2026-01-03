@@ -66,13 +66,12 @@ export default function Page() {
     card: isDarkMode ? '#1e1e1e' : '#fff',
     border: isDarkMode ? '#333' : '#eee',
     blueBar: '#0055ff',
-    secondaryText: isDarkMode ? '#aaa' : '#666' // تأكدت أنها موجودة هنا
+    secondaryText: isDarkMode ? '#aaa' : '#666'
   };
 
   return (
     <div style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', direction: 'rtl', transition: '0.3s', fontFamily: 'system-ui' }}>
       
-      {/* Header */}
       <header style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 20px', alignItems: 'center', backgroundColor: theme.card, borderBottom: `1px solid ${theme.border}` }}>
         <h1 style={{ color: '#ff0000', fontWeight: '900', margin: 0, fontSize: '1.4rem' }}>BRAYOUS</h1>
         <button onClick={() => setIsDarkMode(!isDarkMode)} style={{ background: 'none', border: 'none', color: theme.text }}>
@@ -80,14 +79,12 @@ export default function Page() {
         </button>
       </header>
 
-      {/* الشريط الأزرق الكبير */}
-      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '25px 10px', textAlign: 'center', fontWeight: 'bold', fontSize: '2rem', textTransform: 'uppercase' }}>
+      <div style={{ backgroundColor: theme.blueBar, color: '#fff', padding: '25px 10px', textAlign: 'center', fontWeight: 'bold', fontSize: '2rem' }}>
         BRAYOUS_SHOP
       </div>
 
-      {/* Grid المنتجات */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', padding: '15px' }}>
-        {items.filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item, index) => (
+        {items.filter(i => i.name?.toLowerCase().includes(searchTerm.toLowerCase())).map((item, index) => (
           <div key={index} onClick={() => setSelectedItem(item)} style={{ backgroundColor: theme.card, borderRadius: '10px', overflow: 'hidden', border: `1px solid ${theme.border}`, cursor: 'pointer' }}>
             <img src={item.imageUrl} style={{ width: '100%', height: '160px', objectFit: 'contain', backgroundColor: '#fff' }} />
             <div style={{ padding: '8px' }}>
@@ -98,9 +95,8 @@ export default function Page() {
         ))}
       </div>
 
-      {/* تفاصيل المنتج */}
       {selectedItem && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: theme.bg, z_index: 1000, overflowY: 'auto', paddingBottom: '50px' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: theme.bg, zIndex: 1000, overflowY: 'auto' }}>
           <div style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', borderBottom: `1px solid ${theme.border}`, position: 'sticky', top: 0, backgroundColor: theme.card }}>
             <button onClick={() => {setSelectedItem(null); setShowOrderForm(false);}} style={{background:'none', border:'none', color: theme.text}}><X size={28} /></button>
             <strong>تفاصيل المنتج</strong>
@@ -109,7 +105,6 @@ export default function Page() {
 
           <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-                {/* الصور والتعليقات (جهة اليمين) */}
                 <div style={{ flex: '1 1 300px' }}>
                    <img src={mainImage} style={{ width: '100%', borderRadius: '12px', border: `1px solid ${theme.border}` }} />
                    <div style={{ marginTop: '20px', padding: '15px', backgroundColor: theme.card, borderRadius: '10px', border: `1px solid ${theme.border}` }}>
@@ -118,7 +113,6 @@ export default function Page() {
                    </div>
                 </div>
 
-                {/* الوصف وزر الطلب (جهة اليسار) */}
                 <div style={{ flex: '1 1 300px' }}>
                    <h2 style={{ fontSize: '1.5rem' }}>{selectedItem.name}</h2>
                    <p style={{ color: '#ff4400', fontSize: '2rem', fontWeight: 'bold' }}>{selectedItem.price} DH</p>
@@ -136,7 +130,6 @@ export default function Page() {
         </div>
       )}
 
-      {/* نافذة الفورم (Pop-up) */}
       {showOrderForm && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ backgroundColor: theme.card, padding: '20px', borderRadius: '15px', width: '100%', maxWidth: '400px' }}>
@@ -145,7 +138,7 @@ export default function Page() {
             <input type="text" placeholder="المدينة" onChange={(e) => setOrderInfo({...orderInfo, city: e.target.value})} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', color: '#000' }} />
             <input type="text" placeholder="العنوان" onChange={(e) => setOrderInfo({...orderInfo, address: e.target.value})} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', color: '#000' }} />
             <input type="text" placeholder="المقاس (Taille)" onChange={(e) => setOrderInfo({...orderInfo, size: e.target.value})} style={{ width: '100%', padding: '12px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #ddd', color: '#000' }} />
-            <button onClick={handleFinalWhatsApp} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '15px', borderRadius: '10px', border: 'none', fontWeight: 'bold' }}>إرسال الطلب</button>
+            <button onClick={handleFinalWhatsApp} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '15px', borderRadius: '10px', border: 'none', fontWeight: 'bold' }}>إرسال للواتساب</button>
             <button onClick={() => setShowOrderForm(false)} style={{ width: '100%', background: 'none', border: 'none', marginTop: '10px', color: theme.secondaryText }}>إلغاء</button>
           </div>
         </div>

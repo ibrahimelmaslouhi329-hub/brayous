@@ -12,7 +12,6 @@ const client = createClient({
   useCdn: false,
 });
 
-// الأيقونات مع السميات
 const categories = [
   { name: "الكل", icon: "🛍️" },
   { name: "جاكيط", icon: "🧥" },
@@ -38,8 +37,8 @@ export default function Page() {
     const fetchData = async () => {
       try {
         const data = await client.fetch(`*[_type == "product"]{
-          _id, name, price, oldPrice, description, category,
-          sizes, colors, "imageUrl": image.asset->url,
+          _id, name, price, description, category,
+          "imageUrl": image.asset->url,
           "moreImages": images[].asset->url
         }`);
         setItems(data);
@@ -49,20 +48,20 @@ export default function Page() {
   }, []);
 
   const sendToWhatsApp = () => {
-    if (!orderInfo.name || !orderInfo.city) return alert("عمر معلومات الشحن");
+    if (!orderInfo.name || !orderInfo.city) return alert("المرجو إدخال الاسم والمدينة");
     const total = cart.reduce((acc, item) => acc + Number(item.price), 0);
+    const whatsappNumber = "212601042910";
     
-    // تعديل الرابط ليناسب WhatsApp Business (wa.me)
-    const whatsappNumber = "212601042910"; 
     const message = encodeURIComponent(
-      `*طلب جديد من متجر BRAYOUS* 🚀\n\n` +
+      `*طلب جديد BRAYOUS_SHOP* 🚀\n\n` +
       `*الاسم:* ${orderInfo.name}\n` +
       `*المدينة:* ${orderInfo.city}\n` +
-      `*السلعة:* ${cart.map(i => i.name).join(', ')}\n` +
-      `*المجموع:* ${total} DH`
+      `*العنوان:* ${orderInfo.address}\n\n` +
+      `*المنتجات:*\n${cart.map(i => `- ${i.name} (${i.price} DH)`).join('\n')}\n\n` +
+      `*المجموع الإجمالي:* ${total} DH`
     );
     
-    // استخدام wa.me بدلاً من api.whatsapp لحل مشكل Invalid Number
+    // حل مشكل واتساب بيزنس: استخدام wa.me
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -80,18 +79,30 @@ export default function Page() {
     return matchesSearch && matchesCategory;
   });
 
+  const removeFromCart = (index: number) => {
+    const newCart = [...cart];
+    newCart.splice(index, 1);
+    setCart(newCart);
+  };
+
   return (
     <div style={{ backgroundColor: theme.bg, color: theme.text, minHeight: '100vh', direction: 'rtl', fontFamily: 'system-ui' }}>
       
-      {/* Header & Search */}
+      {/* Header */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, backgroundColor: theme.bg, borderBottom: `1px solid ${theme.border}`, padding: '10px 15px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <h1 style={{ color: theme.red, fontWeight: '900', fontSize: '1.5rem', margin: 0 }}>BRAYOUS</h1>
           <div style={{ display: 'flex', gap: '15px' }}>
-            <button onClick={() => setIsDarkMode(!isDarkMode)} style={{ background: 'none', border: 'none', color: theme.text }}><Sun size={22} /></button>
+            <button onClick={() => setIsDarkMode(!isDarkMode)} style={{ background: 'none', border: 'none', color: theme.text }}>
+              {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+            </button>
             <div onClick={() => setIsCartOpen(true)} style={{ position: 'relative', cursor: 'pointer' }}>
               <ShoppingCart size={24} />
-              {cart.length > 0 && <span style={{ position: 'absolute', top: -8, right: -8, background: theme.red, color: '#fff', borderRadius: '50%', padding: '2px 6px', fontSize: '10px' }}>{cart.length}</span>}
+              {cart.length > 0 && (
+                <span style={{ position: 'absolute', top: -8, right: -8, background: theme.red, color: '#fff', borderRadius: '50%', padding: '2px 6px', fontSize: '10px' }}>
+                  {cart.length}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -106,7 +117,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* شريط الأيقونات بالسميات */}
+      {/* Categories */}
       <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '15px', scrollbarWidth: 'none' }}>
         {categories.map((cat) => (
           <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ textAlign: 'center', minWidth: '70px', cursor: 'pointer' }}>
@@ -115,12 +126,12 @@ export default function Page() {
               backgroundColor: activeCategory === cat.name ? theme.red : theme.card, 
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' 
             }}>{cat.icon}</div>
-            <span style={{ fontSize: '0.7rem', marginTop: '5px', display: 'block', fontWeight: activeCategory === cat.name ? 'bold' : 'normal' }}>{cat.name}</span>
+            <span style={{ fontSize: '0.7rem', marginTop: '5px', display: 'block' }}>{cat.name}</span>
           </div>
         ))}
       </div>
 
-      {/* Grid 2x2 */}
+      {/* Products Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '0 15px 15px' }}>
         {filteredItems.map((item, idx) => (
           <div key={idx} onClick={() => {setSelectedItem(item); setActiveImgIdx(0);}} style={{ background: theme.card, borderRadius: '15px', overflow: 'hidden', border: `1px solid ${theme.border}` }}>
@@ -135,57 +146,96 @@ export default function Page() {
         ))}
       </div>
 
-      {/* صفحة المنتج - صورة متوسطة ووصف منظم */}
+      {/* Product Detail Modal */}
       {selectedItem && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: theme.bg, zIndex: 1000, overflowY: 'auto' }}>
-          <div style={{ padding: '15px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', gap: '10px', position: 'sticky', top: 0, background: theme.bg, zIndex: 10 }}>
+          <div style={{ padding: '15px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', gap: '10px', position: 'sticky', top: 0, background: theme.bg }}>
             <button onClick={() => setSelectedItem(null)} style={{ background: 'none', border: 'none', color: theme.text }}><ArrowRight size={28} /></button>
-            <span style={{ fontWeight: 'bold' }}>رجوع</span>
+            <span style={{ fontWeight: 'bold' }}>رجوع للمتجر</span>
           </div>
-
           <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {/* صورة زوينة مكبيراش بزاف */}
-            <div style={{ width: '100%', maxWidth: '300px', backgroundColor: '#fff', borderRadius: '20px', padding: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.05)' }}>
-              <img 
-                src={activeImgIdx === 0 ? selectedItem.imageUrl : selectedItem.moreImages[activeImgIdx - 1]} 
-                style={{ width: '100%', borderRadius: '15px', objectFit: 'contain' }} 
-              />
+            <div style={{ width: '100%', maxWidth: '300px', backgroundColor: '#fff', borderRadius: '20px', padding: '10px' }}>
+              <img src={activeImgIdx === 0 ? selectedItem.imageUrl : selectedItem.moreImages[activeImgIdx-1]} style={{ width: '100%', borderRadius: '15px' }} />
             </div>
-
-            {/* تصاور إضافية */}
             {selectedItem.moreImages && (
-              <div style={{ display: 'flex', gap: '10px', marginTop: '15px', overflowX: 'auto' }}>
-                <img src={selectedItem.imageUrl} onClick={() => setActiveImgIdx(0)} style={{ width: '50px', height: '50px', borderRadius: '8px', border: activeImgIdx === 0 ? `2px solid ${theme.red}` : '1px solid #ddd' }} />
-                {selectedItem.moreImages.map((img: any, i: number) => (
-                  <img key={i} src={img} onClick={() => setActiveImgIdx(i + 1)} style={{ width: '50px', height: '50px', borderRadius: '8px', border: activeImgIdx === i + 1 ? `2px solid ${theme.red}` : '1px solid #ddd' }} />
+              <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                <img src={selectedItem.imageUrl} onClick={()=>setActiveImgIdx(0)} style={{ width: '50px', height: '50px', borderRadius: '8px', border: activeImgIdx===0 ? `2px solid ${theme.red}` : '1px solid #ddd' }} />
+                {selectedItem.moreImages.map((img:any, i:number)=>(
+                  <img key={i} src={img} onClick={()=>setActiveImgIdx(i+1)} style={{ width: '50px', height: '50px', borderRadius: '8px', border: activeImgIdx===i+1 ? `2px solid ${theme.red}` : '1px solid #ddd' }} />
                 ))}
               </div>
             )}
-
             <div style={{ width: '100%', maxWidth: '400px', marginTop: '20px' }}>
               <h2>{selectedItem.name}</h2>
               <p style={{ color: theme.red, fontSize: '1.7rem', fontWeight: '900' }}>{selectedItem.price} DH</p>
-              
               <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px', marginTop: '15px' }}>
-                <h4 style={{ color: theme.red, marginBottom: '10px' }}>وصف المنتج:</h4>
-                <p style={{ lineHeight: '2', whiteSpace: 'pre-line', fontSize: '0.95rem' }}>
-                  {selectedItem.description}
-                </p>
+                <p style={{ lineHeight: '2', whiteSpace: 'pre-line' }}>{selectedItem.description}</p>
               </div>
-
               <button 
                 onClick={() => {setCart([...cart, selectedItem]); setSelectedItem(null); setIsCartOpen(true);}}
-                style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', fontWeight: 'bold', fontSize: '1.1rem', marginTop: '20px', marginBottom: '40px' }}
+                style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', fontWeight: 'bold', marginTop: '20px' }}
               >
-                أضف إلى السلة واطلب الآن 🛒
+                أضف إلى السلة 🛒
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Cart & Form */}
-      {/* ... (نفس كود السلة) */}
+      {/* Cart Modal - إصلاح العرض */}
+      {isCartOpen && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: theme.bg, zIndex: 2000, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '20px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0 }}>سلة المشتريات ({cart.length})</h3>
+            <button onClick={() => setIsCartOpen(false)} style={{ background: 'none', border: 'none', color: theme.text }}><X size={30}/></button>
+          </div>
+          
+          <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+            {cart.length === 0 ? (
+              <p style={{ textAlign: 'center', marginTop: '50px' }}>السلة فارغة حالياً</p>
+            ) : (
+              cart.map((item, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 0', borderBottom: `1px solid ${theme.border}` }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem' }}>{item.name}</h4>
+                    <span style={{ color: theme.red, fontWeight: 'bold' }}>{item.price} DH</span>
+                  </div>
+                  <button onClick={() => removeFromCart(i)} style={{ color: 'red', fontSize: '0.8rem', background: 'none', border: 'none' }}>حذف</button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {cart.length > 0 && (
+            <div style={{ padding: '20px', borderTop: `1px solid ${theme.border}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                <span>المجموع:</span>
+                <span>{cart.reduce((acc, item) => acc + Number(item.price), 0)} DH</span>
+              </div>
+              <button 
+                onClick={() => {setIsCartOpen(false); setShowOrderForm(true);}} 
+                style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', fontWeight: 'bold' }}
+              >
+                إتمام الطلب 🚀
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Order Form */}
+      {showOrderForm && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ backgroundColor: theme.bg, padding: '25px', borderRadius: '20px', width: '100%', maxWidth: '400px' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>معلومات الشحن 🚚</h2>
+            <input placeholder="الاسم الكامل" onChange={(e) => setOrderInfo({...orderInfo, name: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', marginBottom: '10px', border: '1px solid #ddd', color: '#000' }} />
+            <input placeholder="المدينة" onChange={(e) => setOrderInfo({...orderInfo, city: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', marginBottom: '10px', border: '1px solid #ddd', color: '#000' }} />
+            <input placeholder="العنوان (اختياري)" onChange={(e) => setOrderInfo({...orderInfo, address: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #ddd', color: '#000' }} />
+            <button onClick={sendToWhatsApp} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '18px', borderRadius: '15px', fontWeight: 'bold' }}>تأكيد عبر واتساب ✅</button>
+            <button onClick={() => setShowOrderForm(false)} style={{ width: '100%', background: 'none', border: 'none', color: '#999', marginTop: '10px' }}>إلغاء</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

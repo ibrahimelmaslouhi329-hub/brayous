@@ -51,8 +51,8 @@ export default function Page() {
     if (!orderInfo.name || !orderInfo.city) return alert("المرجو إدخال الاسم والمدينة");
     
     const total = cart.reduce((acc, item) => acc + Number(item.price), 0);
-    // الرقم ديالك بدون + وبدون مسافات لضمان العمل مع Business
-    const whatsappNumber = "212601042910";
+    // تحديث النمرة الجديدة هنا بصيغة دولية صحيحة
+    const whatsappNumber = "212612889129";
     
     const message = encodeURIComponent(
       `*طلب جديد BRAYOUS_SHOP* 🚀\n\n` +
@@ -63,9 +63,8 @@ export default function Page() {
       `*المجموع الإجمالي:* ${total} DH`
     );
     
-    // استخدام wa.me مباشرة
-    const whatsappLink = `https://wa.me/${whatsappNumber}?text=${message}`;
-    window.open(whatsappLink, '_blank');
+    // استخدام wa.me لضمان عمل WhatsApp Business
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
   const removeFromCart = (index: number) => {
@@ -116,7 +115,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Categories Bar */}
+      {/* Categories Bar with Names */}
       <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '15px', scrollbarWidth: 'none' }}>
         {categories.map((cat) => (
           <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ textAlign: 'center', minWidth: '70px', cursor: 'pointer' }}>
@@ -141,7 +140,7 @@ export default function Page() {
         ))}
       </div>
 
-      {/* صفحة المنتج (Modal) */}
+      {/* Product Detail Modal - Optimized Image Size */}
       {selectedItem && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: theme.bg, zIndex: 1000, overflowY: 'auto' }}>
           <div style={{ padding: '15px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', gap: '10px', position: 'sticky', top: 0, background: theme.bg, zIndex: 10 }}>
@@ -164,7 +163,7 @@ export default function Page() {
               <h2>{selectedItem.name}</h2>
               <p style={{ color: theme.red, fontSize: '1.6rem', fontWeight: '900' }}>{selectedItem.price} DH</p>
               <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px' }}>
-                <p style={{ lineHeight: '1.8', whiteSpace: 'pre-line' }}>{selectedItem.description}</p>
+                <p style={{ lineHeight: '2', whiteSpace: 'pre-line' }}>{selectedItem.description}</p>
               </div>
               <button onClick={() => {setCart([...cart, selectedItem]); setSelectedItem(null); setIsCartOpen(true);}} style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', fontWeight: 'bold', marginTop: '20px' }}>أضف إلى السلة 🛍️</button>
             </div>
@@ -172,7 +171,7 @@ export default function Page() {
         </div>
       )}
 
-      {/* السلة (Cart) */}
+      {/* Full Screen Cart Modal */}
       {isCartOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: theme.bg, zIndex: 2000, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '20px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between' }}>
@@ -201,7 +200,7 @@ export default function Page() {
         </div>
       )}
 
-      {/* فورم الشحن */}
+      {/* Order Form */}
       {showOrderForm && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ backgroundColor: theme.bg, padding: '25px', borderRadius: '20px', width: '100%', maxWidth: '400px' }}>

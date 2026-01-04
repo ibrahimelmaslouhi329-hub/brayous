@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, X, Search, Moon, Sun, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, X, Search, Moon, Sun, ArrowRight } from 'lucide-react';
 import { createClient } from 'next-sanity';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,6 @@ const client = createClient({
   useCdn: false,
 });
 
-// الأيقونات مع السميات ديالهم
 const categories = [
   { name: "الكل", icon: "🛍️" },
   { name: "جاكيط", icon: "🧥" },
@@ -32,7 +31,7 @@ export default function Page() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderInfo, setOrderInfo] = useState({ name: '', city: '', address: '' });
-  const [activeImgIdx, setActiveImgIdx] = useState(0); // للصورة المختارة
+  const [activeImgIdx, setActiveImgIdx] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,20 +97,12 @@ export default function Page() {
         </div>
       </header>
 
-      {/* شريط الأيقونات مع السميات */}
+      {/* Categories Bar */}
       <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '15px', scrollbarWidth: 'none' }}>
         {categories.map((cat) => (
           <div key={cat.name} onClick={() => setActiveCategory(cat.name)} style={{ textAlign: 'center', minWidth: '70px', cursor: 'pointer' }}>
-            <div style={{ 
-              width: '55px', height: '55px', borderRadius: '15px', 
-              backgroundColor: activeCategory === cat.name ? theme.red : theme.card, 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' 
-            }}>
-              {cat.icon}
-            </div>
-            <span style={{ fontSize: '0.75rem', marginTop: '6px', fontWeight: activeCategory === cat.name ? 'bold' : 'normal', display: 'block' }}>
-              {cat.name}
-            </span>
+            <div style={{ width: '55px', height: '55px', borderRadius: '15px', backgroundColor: activeCategory === cat.name ? theme.red : theme.card, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>{cat.icon}</div>
+            <span style={{ fontSize: '0.75rem', marginTop: '6px', fontWeight: activeCategory === cat.name ? 'bold' : 'normal', display: 'block' }}>{cat.name}</span>
           </div>
         ))}
       </div>
@@ -131,68 +122,64 @@ export default function Page() {
         ))}
       </div>
 
-      {/* صفحة المنتج المطور */}
+      {/* صفحة المنتج المطور مع صورة مصغرة */}
       {selectedItem && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: theme.bg, zIndex: 1000, overflowY: 'auto' }}>
-          <div style={{ padding: '15px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', gap: '10px', position:'sticky', top:0, background:theme.bg }}>
+          <div style={{ padding: '15px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', gap: '10px', position:'sticky', top:0, background:theme.bg, zIndex: 10 }}>
             <button onClick={() => setSelectedItem(null)} style={{ background: 'none', border: 'none', color: theme.text }}><ArrowRight size={28} /></button>
             <span style={{ fontWeight: 'bold' }}>تفاصيل المنتج</span>
           </div>
 
-          <div style={{ padding: '20px' }}>
-            {/* عرض الصور الإضافية */}
-            <div style={{ position: 'relative', backgroundColor: '#fff', borderRadius: '20px', padding: '10px' }}>
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* تعديل قياس الصورة: كتمثل 80% من عرض الشاشة بحد أقصى 350px */}
+            <div style={{ width: '100%', maxWidth: '350px', backgroundColor: '#fff', borderRadius: '20px', padding: '10px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
               <img 
                 src={activeImgIdx === 0 ? selectedItem.imageUrl : selectedItem.moreImages[activeImgIdx - 1]} 
-                style={{ width: '100%', borderRadius: '15px' }} 
+                style={{ width: '100%', borderRadius: '15px', height: 'auto', maxHeight: '400px', objectFit: 'contain' }} 
               />
             </div>
 
-            {/* مصغرات الصور (Gallery) */}
+            {/* مصغرات الصور */}
             {selectedItem.moreImages && (
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '15px', overflowX: 'auto', width: '100%', justifyContent: 'center' }}>
                 <img 
                   src={selectedItem.imageUrl} 
                   onClick={() => setActiveImgIdx(0)}
-                  style={{ width: '60px', height: '60px', borderRadius: '8px', border: activeImgIdx === 0 ? `2px solid ${theme.red}` : '1px solid #ddd', objectFit: 'cover' }} 
+                  style={{ width: '50px', height: '50px', borderRadius: '8px', border: activeImgIdx === 0 ? `2px solid ${theme.red}` : '1px solid #ddd', objectFit: 'cover' }} 
                 />
                 {selectedItem.moreImages.map((img: any, i: number) => (
                   <img 
                     key={i} src={img} 
                     onClick={() => setActiveImgIdx(i + 1)}
-                    style={{ width: '60px', height: '60px', borderRadius: '8px', border: activeImgIdx === i + 1 ? `2px solid ${theme.red}` : '1px solid #ddd', objectFit: 'cover' }} 
+                    style={{ width: '50px', height: '50px', borderRadius: '8px', border: activeImgIdx === i + 1 ? `2px solid ${theme.red}` : '1px solid #ddd', objectFit: 'cover' }} 
                   />
                 ))}
               </div>
             )}
 
-            <h2 style={{ marginTop: '20px', fontSize: '1.4rem' }}>{selectedItem.name}</h2>
-            <p style={{ color: theme.red, fontSize: '1.8rem', fontWeight: '900' }}>{selectedItem.price} DH</p>
-            
-            {/* الوصف بسطور مباعدة */}
-            <div style={{ margin: '25px 0', borderTop: `1px solid ${theme.border}`, paddingTop: '20px' }}>
-              <h4 style={{ marginBottom: '15px', color: theme.red }}>وصف المنتج:</h4>
-              <p style={{ 
-                lineHeight: '2', // تباعد الأسطر
-                whiteSpace: 'pre-line', // الحفاظ على القفز للسطر
-                fontSize: '0.95rem',
-                color: isDarkMode ? '#ccc' : '#444'
-              }}>
-                {selectedItem.description}
-              </p>
-            </div>
+            <div style={{ width: '100%', maxWidth: '500px', marginTop: '20px' }}>
+              <h2 style={{ fontSize: '1.3rem' }}>{selectedItem.name}</h2>
+              <p style={{ color: theme.red, fontSize: '1.6rem', fontWeight: '900', margin: '10px 0' }}>{selectedItem.price} DH</p>
+              
+              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '15px' }}>
+                <h4 style={{ color: theme.red, marginBottom: '10px' }}>وصف المنتج:</h4>
+                <p style={{ lineHeight: '1.8', whiteSpace: 'pre-line', fontSize: '0.9rem', color: isDarkMode ? '#ccc' : '#444' }}>
+                  {selectedItem.description}
+                </p>
+              </div>
 
-            <button 
-              onClick={() => {setCart([...cart, selectedItem]); setSelectedItem(null); setIsCartOpen(true);}}
-              style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '20px', borderRadius: '15px', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '50px' }}
-            >
-              أضف إلى السلة واطلب الآن 🛍️
-            </button>
+              <button 
+                onClick={() => {setCart([...cart, selectedItem]); setSelectedItem(null); setIsCartOpen(true);}}
+                style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', fontWeight: 'bold', fontSize: '1.1rem', marginTop: '20px', marginBottom: '40px' }}
+              >
+                أضف إلى السلة 🛍️
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* مودال السلة وفورم الشحن كيبقاو نفسهم لضمان الخدمة */}
+      {/* Cart & Form remain the same for stability */}
       {isCartOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: theme.bg, zIndex: 2000, padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -205,17 +192,17 @@ export default function Page() {
               <strong>{item.price} DH</strong>
             </div>
           ))}
-          <button onClick={() => setShowOrderForm(true)} style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', marginTop: '30px', fontWeight: 'bold' }}>إتمام الطلب</button>
+          <button onClick={() => setShowOrderForm(true)} style={{ width: '100%', backgroundColor: theme.red, color: '#fff', padding: '18px', borderRadius: '15px', marginTop: '30px' }}>إتمام الطلب</button>
         </div>
       )}
 
       {showOrderForm && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ backgroundColor: theme.bg, padding: '25px', borderRadius: '20px', width: '100%' }}>
+          <div style={{ backgroundColor: theme.bg, padding: '25px', borderRadius: '20px', width: '100%', maxWidth: '400px' }}>
             <h2 style={{textAlign:'center', marginBottom:'20px'}}>معلومات الشحن 🚚</h2>
             <input placeholder="الاسم الكامل" onChange={(e) => setOrderInfo({...orderInfo, name: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', marginBottom: '10px', color:'#000' }} />
             <input placeholder="المدينة" onChange={(e) => setOrderInfo({...orderInfo, city: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', marginBottom: '10px', color:'#000' }} />
-            <button onClick={sendToWhatsApp} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '18px', borderRadius: '15px', fontWeight:'bold' }}>تأكيد الطلب عبر واتساب</button>
+            <button onClick={sendToWhatsApp} style={{ width: '100%', backgroundColor: '#25D366', color: '#fff', padding: '18px', borderRadius: '15px', fontWeight:'bold' }}>تأكيد عبر واتساب</button>
             <button onClick={() => setShowOrderForm(false)} style={{ width: '100%', background: 'none', border: 'none', color: '#999', marginTop: '10px' }}>إلغاء</button>
           </div>
         </div>
